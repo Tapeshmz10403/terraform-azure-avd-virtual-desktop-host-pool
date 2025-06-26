@@ -2,7 +2,7 @@ provider "azurerm" {
   features {}
 }
 
-resource "azurerm_virtual_desktop_host_pool" "test" {
+resource "azurerm_virtual_desktop_host_pool" "main" {
   name                = var.host_pool_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -16,18 +16,18 @@ resource "azurerm_virtual_desktop_host_pool" "test" {
   start_vm_on_connect      = var.start_vm_on_connect
 }
 
-resource "azurerm_virtual_desktop_application_group" "test" {
+resource "azurerm_virtual_desktop_application_group" "main" {
   name                = "${var.host_pool_name}-dag"
   location            = var.location
   resource_group_name = var.resource_group_name
 
   type          = "Desktop"
-  host_pool_id  = azurerm_virtual_desktop_host_pool.test.id
+  host_pool_id  = azurerm_virtual_desktop_host_pool.main.id
   friendly_name = "${var.host_pool_name}-DAG"
   description   = "Desktop Application Group for ${var.host_pool_name}"
 }
 
-resource "azurerm_virtual_desktop_workspace" "test" {
+resource "azurerm_virtual_desktop_workspace" "main" {
   name                = "${var.host_pool_name}-ws"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -35,7 +35,7 @@ resource "azurerm_virtual_desktop_workspace" "test" {
   description         = "Workspace for ${var.host_pool_name}"
 }
 
-resource "azurerm_virtual_desktop_workspace_application_group_association" "test" {
-  workspace_id         = azurerm_virtual_desktop_workspace.test.id
-  application_group_id = azurerm_virtual_desktop_application_group.test.id
+resource "azurerm_virtual_desktop_workspace_application_group_association" "main" {
+  workspace_id         = azurerm_virtual_desktop_workspace.main.id
+  application_group_id = azurerm_virtual_desktop_application_group.main.id
 }
