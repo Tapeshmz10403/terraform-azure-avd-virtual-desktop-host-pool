@@ -1,50 +1,87 @@
+# Resource Group
 variable "resource_group_name" {
-  description = "The name of the resource group"
+  description = "Name of the resource group"
   type        = string
 }
 
 variable "location" {
-  description = "The Azure location where the resources should be created"
+  description = "Azure regin for resources"
+  type        = string
+  default     = "easteurope"
+}
+
+# Virtual Network
+variable "vnet_name" {
+  description = "Name of the virtual network"
   type        = string
 }
 
-variable "host_pool_name" {
-  description = "Name of the Virtual Desktop Host Pool"
-  type        = string
+variable "vnet_address_space" {
+  description = "Address space for the virtual network"
+  type        = list(string)
 }
 
-variable "host_pool_type" {
-  description = "The type of host pool. Possible values: 'Personal' or 'Pooled'"
-  type        = string
-  default     = "Pooled"
+# Subnets
+variable "Subnets" {
+  description = "Map of subnets with address prefixes"
+  type        = map(list(string))
+
 }
 
-variable "load_balancer_type" {
-  description = "Load balancing type. Possible values: 'BreadthFirst', 'DepthFirst', 'Persistent'"
-  type        = string
-  default     = "DepthFirst"
+#host pools
+variable "host_pools" {
+  description = "Configuration for multiple host pools"
+  type = map(object({
+    name                    = string
+    type                    = string
+    friendly_name           = string
+    validation_environment  = bool
+    maximum_sessions        = number
+    workspace_description   = string
+    workspace_friendly_name = string
+  }))
+
 }
 
-variable "friendly_name" {
-  description = "Friendly name for the host pool"
-  type        = string
-  default     = "AVD Host Pool"
-}
 
-variable "description" {
-  description = "Description for the host pool"
-  type        = string
-  default     = "Host pool for Azure Virtual Desktop"
-}
 
-variable "maximum_sessions_allowed" {
-  description = "Maximum number of concurrent sessions"
-  type        = number
-  default     = 10
-}
+#OLD entry -------
+# variable "host_pools" {
+#   type = list(object({
+#     name               = string
+#     location           = string
+#     resource_group     = string
+#     session_host_count = number
+#     vm_size            = string
+#     vnet_id            = string
+#     subnet_id          = string
+#     domain_join_type   = string
+#     ad_domain          = string
+#     fslogix_profile = object({
+#       storage_account_name = string
+#       share_name           = string
+#     })
+#   }))
+# }
 
-variable "start_vm_on_connect" {
-  description = "Start VM on connect"
-  type        = bool
-  default     = false
-}
+# variable "avd_image_reference" {
+#   type = object({
+#     publisher = string
+#     offer     = string
+#     sku       = string
+#     version   = string
+#   })
+# }
+
+# variable "log_analytics_workspace_id" {
+#   type = string
+# }
+
+# variable "admin_username" {
+#   type = string
+# }
+
+# variable "admin_password" {
+#   type      = string
+#   sensitive = true
+# }

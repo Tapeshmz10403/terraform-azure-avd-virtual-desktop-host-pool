@@ -1,41 +1,68 @@
-provider "azurerm" {
-  features {}
+#Create Resource Group
+resource "azurerm_resource_group" "avd_rg" {
+  name     = "var.resource_group_name"
+  location = "var.location"
 }
 
-resource "azurerm_virtual_desktop_host_pool" "main" {
-  name                = var.host_pool_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
+#Create Vnet
+resource "azurerm_virtuak_network" "vnet" {
+  name                = var.vnet_name
+  location            = azurerm_resource_group.avd_rg.name
+  resource_group_name = azurerm_resource_group.avd_rg.name
+  address_space       = var.vnet_address_space
 
-  type                     = var.host_pool_type
-  load_balancer_type       = var.load_balancer_type
-  friendly_name            = var.friendly_name
-  description              = var.description
-  maximum_sessions_allowed = var.maximum_sessions_allowed
-  validate_environment     = true
-  start_vm_on_connect      = var.start_vm_on_connect
 }
 
-resource "azurerm_virtual_desktop_application_group" "main" {
-  name                = "${var.host_pool_name}-dag"
-  location            = var.location
-  resource_group_name = var.resource_group_name
+#Create Subnets
+resource "azurerm_subnet" "subnet" {
+  for_each = var.Subnets
 
-  type          = "Desktop"
-  host_pool_id  = azurerm_virtual_desktop_host_pool.main.id
-  friendly_name = "${var.host_pool_name}-DAG"
-  description   = "Desktop Application Group for ${var.host_pool_name}"
+  name                 = each.key
+  resource_group_name  = azurerm_resource_group.avd_rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = each.value
+
 }
 
-resource "azurerm_virtual_desktop_workspace" "main" {
-  name                = "${var.host_pool_name}-ws"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  friendly_name       = "${var.host_pool_name} Workspace"
-  description         = "Workspace for ${var.host_pool_name}"
+#Create host pools, applciation group and workspaces
+resource "azuerm_avd_host_pool" "host_pools" {
+  for_each = var.host_pools
+
+  name                  = each.value["name"]
+  resource_group_name   = azurerm_resource_group.avd_rg.name
+  location              = azurerm_resource_group.avd_rg.location
+  type                  = each.value["friendly_name"]
+  validation_enviroment = each.value["validation_environment"]
+  maximum_sessions      = each.value["maximum_sessions"]
+
 }
 
-resource "azurerm_virtual_desktop_workspace_application_group_association" "main" {
-  workspace_id         = azurerm_virtual_desktop_workspace.main.id
-  application_group_id = azurerm_virtual_desktop_application_group.main.id
+resource "azurerm_avd_application_group" "app_group" {
+  for_each = var.host_pools
+
+  name                = "${each.value["name"]}-app-group"
+  resource_group_name = azurerm_avd_application_group.avd_rg.name
+  location            = azurerm_avd_application_group.avd_rg.location
+  host_pool_id        = azurerm_avd_host_pools[each.key].id
+  type                = "Desktop"
+
+}
+
+resource "arurerm_avd_workspace" "workspaces" {
+  for_each = var.host_pools
+
+  name                = "${each.value["name"]}-workspace"
+  resource_group_name = azurerm_avd_application_group.avd_rg.name
+  location            = azurerm_avd_application_group.avd_rg.location
+  description         = each.value["workspace_description"]
+  friendly_name       = each.value["workspace_friendly_name"]
+
+}
+
+resource "arurerm_avd_workspace_application_group_association" "workspace_app_group_assoc" {
+  for_each = var.host_pools
+
+  application_grougp_id = azurerm_avd_application_group.app_groups[each.key].id
+  workspace_id          = azure_avd_workspace.workspaces[each.key].id
+
 }
