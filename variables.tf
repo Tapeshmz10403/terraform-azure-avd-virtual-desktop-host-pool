@@ -67,7 +67,7 @@ variable "host_pools" {
 #   }))
 # }
 
-# variable "avd_image_reference" {
+# variable "virtual_desktop_image_reference" {
 #   type = object({
 #     publisher = string
 #     offer     = string
