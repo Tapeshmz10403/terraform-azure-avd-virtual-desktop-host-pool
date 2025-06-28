@@ -44,8 +44,8 @@ resource "azurerm_virtual_desktop_application_group" "app_group" {
   name = "${each.value["name"]}-app-group"
   #resource_group_name = azurerm_virtual_desktop_application_group.AVD_rg.name
   resource_group_name = var.resource_group_name
-  location            = azurerm_virtual_desktop_application_group.AVD_rg.location
-  host_pool_id        = azurerm_virtual_desktop_host_pools[each.key].id
+  location            = azurerm_virtual_desktop_group.AVD_rg.location
+  host_pool_id        = azurerm_virtual_desktop_host_pools.host_pools[each.key].id
   type                = "Desktop"
 
 }
@@ -66,7 +66,7 @@ resource "azurerm_virtual_desktop_workspace" "workspaces" {
 resource "azurerm_virtual_desktop_workspace_application_group_association" "workspace_app_group_assoc" {
   for_each = var.host_pools
 
-  application_group_id = azurerm_virtual_desktop_application_group.app_groups[each.key].id
+  application_group_id = azurerm_virtual_desktop_application_group.app_group[each.key].id
   workspace_id         = azurerm_virtual_desktop_workspace.workspaces[each.key].id
 
 }
