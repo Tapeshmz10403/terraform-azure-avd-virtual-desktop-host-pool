@@ -25,7 +25,7 @@ resource "azurerm_subnet" "subnet" {
 }
 
 #Create host pools, applciation group and workspaces
-resource "azuerm_avd_host_pool" "host_pools" {
+resource "azurerm_avd_host_pool" "host_pools" {
   for_each = var.host_pools
 
   name                  = each.value["name"]
@@ -48,7 +48,7 @@ resource "azurerm_avd_application_group" "app_group" {
 
 }
 
-resource "arurerm_avd_workspace" "workspaces" {
+resource "azurerm_avd_workspace" "workspaces" {
   for_each = var.host_pools
 
   name                = "${each.value["name"]}-workspace"
@@ -59,10 +59,10 @@ resource "arurerm_avd_workspace" "workspaces" {
 
 }
 
-resource "arurerm_avd_workspace_application_group_association" "workspace_app_group_assoc" {
+resource "azurerm_avd_workspace_application_group_association" "workspace_app_group_assoc" {
   for_each = var.host_pools
 
   application_grougp_id = azurerm_avd_application_group.app_groups[each.key].id
-  workspace_id          = azure_avd_workspace.workspaces[each.key].id
+  workspace_id          = azurerm_avd_workspace.workspaces[each.key].id
 
 }
