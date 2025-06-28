@@ -44,8 +44,8 @@ resource "azurerm_virtual_desktop_application_group" "app_group" {
   name = "${each.value["name"]}-app-group"
   #resource_group_name = azurerm_virtual_desktop_application_group.AVD_rg.name
   resource_group_name = var.resource_group_name
-  location            = azurerm_virtual_desktop_group.AVD_rg.location
-  host_pool_id        = azurerm_virtual_desktop_host_pools.host_pools[each.key].id
+  location            = azurerm_resource_group.AVD_rg.location
+  host_pool_id        = azurerm_virtual_desktop_host_pool.host_pools[each.key].id
   type                = "Desktop"
 
 }
