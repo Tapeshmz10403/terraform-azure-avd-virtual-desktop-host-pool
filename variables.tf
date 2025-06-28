@@ -25,7 +25,7 @@ variable "vnet_address_space" {
 variable "Subnets" {
   description = "Map of subnets with address prefixes"
   type        = map(list(string))
-    default = {
+  default = {
     "Subnet1" = ["10.0.1.0/24"]
   }
 
