@@ -46,45 +46,29 @@ variable "host_pools" {
 
 }
 
+#Subscription id
+variable "subscription_id" {
+  description = "Azure susscription id"
+  type        = string
+}
 
+#Workspace name
+variable "workspace_name" {
+  description = "Azure workspace"
+  type        = string
+}
 
-#OLD entry -------
-# variable "host_pools" {
-#   type = list(object({
-#     name               = string
-#     location           = string
-#     resource_group     = string
-#     session_host_count = number
-#     vm_size            = string
-#     vnet_id            = string
-#     subnet_id          = string
-#     domain_join_type   = string
-#     ad_domain          = string
-#     fslogix_profile = object({
-#       storage_account_name = string
-#       share_name           = string
-#     })
-#   }))
-# }
+#Role definition 
+variable "role_definition_id" {
+  description = <<EOT
+  - desktop virtualization reader: "13d633b2-81c7-4a44-87c0-460493f12e55"
+  - Desktop Virtualization Contributor: "d29a9fd4-f9f5-42f0-947c-7d1eabbf76c8"
+  EOT
+  type        = string
+}
 
-# variable "virtual_desktop_image_reference" {
-#   type = object({
-#     publisher = string
-#     offer     = string
-#     sku       = string
-#     version   = string
-#   })
-# }
-
-# variable "log_analytics_workspace_id" {
-#   type = string
-# }
-
-# variable "admin_username" {
-#   type = string
-# }
-
-# variable "admin_password" {
-#   type      = string
-#   sensitive = true
-# }
+#Principle id 
+variable "principal_id" {
+  description = "Object id or principle id for user, group etc.."
+  type        = string
+}
